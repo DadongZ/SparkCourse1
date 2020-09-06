@@ -1,11 +1,12 @@
 # Big Data with Apache Spark and Python
 
-[![Course](https://www.udemy.com/staticx/udemy/images/v6/logo-coral-light.svg)   ](https://www.udemy.com/course/taming-big-data-with-apache-spark-hands-on)
+[![Course](https://www.udemy.com/staticx/udemy/images/v6/logo-coral-light.svg)](https://www.udemy.com/course/taming-big-data-with-apache-spark-hands-on)
 
 ## Sections
 
 - [Set up](#set-up)
 - [Course materials](#course-materials)
+- [Test run](#test-run)
 
 
 ### Set up
@@ -16,4 +17,11 @@
 [Anaconda 3](https://docs.anaconda.com/anaconda/install/)
 
 ### Course materials
-[Download](http://media.sundog-soft.com/Udemy/SparkCourse.zip)
+[Python Script](http://media.sundog-soft.com/Udemy/SparkCourse.zip)
+
+[Movie data](https://grouplens.org/datasets/movielens/)
+
+### Test run
+```bash
+./run
+```
