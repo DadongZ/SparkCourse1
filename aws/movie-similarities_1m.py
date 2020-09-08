@@ -2,9 +2,14 @@ import sys
 from pyspark import SparkContext, SparkConf
 from math import sqrt
 
+#To run on EMR successfully + output results for Star Wars:
+#aws s3 cp s3://sundog-spark/MovieSimilarities1M.py ./
+#aws s3 sp c3://sundog-spark/ml-1m/movies.dat ./
+#spark-submit --executor-memory 1g MovieSimilarities1M.py 260
+
 def loadMovieNames():
     movieNames = {}
-    with open("s3n://dz33/spark/ml-1m/movies.dat", encoding='utf8', errors='ignore') as f:
+    with open("movies.dat", encoding='utf8', errors='ignore') as f:
         for line in f:
             fields = line.split('::')
             movieNames[int(fields[0])] = fields[1]
@@ -40,8 +45,9 @@ def computeCosineSimilarity(ratingPairs):
 
 # local[*]: sparks built in cluster manager and treat every core on your desktop as a node on a cluster
 conf = SparkConf() #parameters passed to cmd
-sc = SparkContext.getOrCreate(conf=conf)
+sc = SparkContext(conf=conf)
 
+print("\nLoading movie names...")
 nameDict = loadMovieNames()
 
 data = sc.textFile("s3n://dz33/spark/ml-1m/ratings.dat")
@@ -53,7 +59,8 @@ joinedRatings = ratingsPartitioned.join(ratingsPartitioned)
 
 #permutation (userID, ((movieID, rating), (movieID, rating)))
 uniqueJoinedRatings = joinedRatings.filter(filterDuplicates)
-moviePairs = uniqueJoinedRatings.map(makePairs)
+moviePairs = uniqueJoinedRatings.map(makePairs).partitionBy(100)
+
 moviePairRatings = moviePairs.groupByKey()
 moviePairSimilarities = moviePairRatings.mapValues(computeCosineSimilarity).persist()
 #save the results
@@ -63,7 +70,7 @@ moviePairSimilarities.saveAsTextFile("movie-sims")
 if (len(sys.argv) > 1):
     
     scoreThreshold = 0.97
-    coOccurenceThreshold = 50
+    coOccurenceThreshold = 500
 
     movieID = int(sys.argv[1])
 

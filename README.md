@@ -10,6 +10,9 @@
 - [Introduction to Spark](#introduction-to-spark)
 - [RDD](#rdd)
 - [Run Spark on Cluster](#run-spark-on-cluster)
+- [Trouble shooting](#trouble-shooting)
+- [Spark SQL](#spark-sql)
+- [MLLib](#mllib)
 
 
 ### Set up
@@ -66,3 +69,44 @@
 - sign up EMR and create EMR cluster
 - connect EMR by ssh
 - spark-submit -execute-memory 1g s3://dz33/spark/aws/movie-similarity_1m.py 260
+
+### Trouble shooting
+
+- standalone mode process log: localhost:4040
+- `yarn logs --applicationID <app ID>`
+- don't rely on fault tolerant
+- use broadcast variables to share data outside of RDD
+
+### Spark SQL
+- Extends RDD as a DataFrame object
+- DataFrames:
+    - row objects
+    - SQL queries
+    - schema leading to efficient storage
+    - read and write to JSON, HIVE, parquet
+    - communicate with JDBC ODBC Tableau
+
+```python
+from pyspark.sql import SQLContext, Row
+hiveContext = HiveContext(sc)
+imputData = spark.read.json(dataFile)
+inputData.createOrReplaceTempView("myStructuredStuff")
+myResultDataFrame = hiveContext.sql('""'SELECT foo FROME bar ORDER BY foobar'""')
+myResultDataFrame.show(n)
+myResultDataFrame.select("someFiledName")
+myResultDataFrame.filter(myResultDataFrame("someFiledName" > 200))
+myResultDataFrame.groupBy(myResultDataFrame("someFiledName"))
+myResultDataFrame.rdd().map(function)
+```
+
+### MLLib
+- basic statistics, Ch-squared, pearson, spearman, variance
+- Linear regression
+- Vector machines, naive bayes classifier, decision trees, KM clustering, PCA
+- Alternating Least squares (ALS), ->Netflix
+- data types: vector, labeledPoint, rating
+
+
+
+
+

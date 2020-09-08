@@ -4,7 +4,7 @@ from pyspark.sql import Row
 import collections
 
 # Create a SparkSession (Note, the config section is only for Windows!)
-spark = SparkSession.builder.config("spark.sql.warehouse.dir", "file:///C:/temp").appName("SparkSQL").getOrCreate()
+spark = SparkSession.appName("SparkSQL").getOrCreate()
 
 def mapper(line):
     fields = line.split(',')
